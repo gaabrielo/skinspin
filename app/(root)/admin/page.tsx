@@ -20,7 +20,6 @@ import { useEffect, useState } from 'react';
 
 const AdminDashPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  console.log('Products =>', products);
 
   useEffect(() => {
     const getProductsQuery = async () => {

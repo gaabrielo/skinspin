@@ -12,7 +12,7 @@ import Link from 'next/link';
 import SteamIcon from '@/public/images/logo-steam.svg';
 import GithubIcon from '@/public/images/logo-git.svg';
 import { Separator } from '@/components/ui/separator';
-import { ExternalLinkIcon, MoveUpRightIcon, ShieldIcon } from 'lucide-react';
+import { MoveUpRightIcon, ShieldIcon } from 'lucide-react';
 
 const Footer = () => {
   const { resolvedTheme } = useTheme();

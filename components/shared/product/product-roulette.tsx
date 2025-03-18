@@ -3,11 +3,10 @@
 import RouletteItem from '@/components/shared/product/roulette-item';
 import { Card, CardContent } from '@/components/ui/card';
 import useMeasure from 'react-use-measure';
-import { motion, useMotionValue, useAnimation } from 'motion/react';
-import { animate } from 'motion';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion, useAnimation } from 'motion/react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Product, ProductSkinProps, SkinProps } from '@/types';
+import { Product, SkinProps } from '@/types';
 
 const shuffleArray = (array: SkinProps[]) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -24,7 +23,7 @@ const ProductRoulette = ({ product }: { product: Product }) => {
   const currentPosition = useRef(0);
 
   const [isSpinning, setIsSpinning] = useState(false);
-  const [result, setResult] = useState<SkinProps | null>(null);
+  // const [result, setResult] = useState<SkinProps | null>(null);
   const [currentWeaponsPassed, setCurrentWeaponsPassed] = useState(0);
 
   const extendedData = () => {
@@ -40,7 +39,7 @@ const ProductRoulette = ({ product }: { product: Product }) => {
   };
 
   const [visibleSkins, setVisibleSkins] = useState<SkinProps[]>(extendedData());
-  console.log(`visibleSkins: ${visibleSkins}`);
+  console.log(`visibleSkins => ${visibleSkins}`);
 
   const handleSpin = () => {
     setIsSpinning(true);
@@ -57,7 +56,6 @@ const ProductRoulette = ({ product }: { product: Product }) => {
     currentPosition.current = newPosition;
     const updatedWeaponsPassed = currentWeaponsPassed + weaponsPassed;
 
-    console.log('NP:', newPosition);
     if (updatedWeaponsPassed > 80) {
       setCurrentWeaponsPassed(0);
 
@@ -92,16 +90,15 @@ const ProductRoulette = ({ product }: { product: Product }) => {
       );
       const chosenItem: SkinProps = visibleSkins[itemIndex];
 
-      setResult(chosenItem);
+      // setResult(chosenItem);
       setIsSpinning(false);
 
-      alert(JSON.stringify(chosenItem));
+      alert(`You get a ${chosenItem.weapon} ${chosenItem.name}!`);
     }, 5000);
   };
 
   return (
     <>
-      <p className="pb-10 text-center">Items passed: {currentWeaponsPassed}</p>
       <div className="relative overflow-clip rounded-lg p-0.5 bg-gradient-to-b from-[#f5c71b] to-border ring-8 ring-border">
         <div className="absolute w-10 h-20 bg-[#f5c71b] left-1/2 bottom-2 transform -translate-x-1/2 opacity-20 rounded-full blur-2xl z-10"></div>
         <div className="absolute w-80 h-10 bg-[#f5c71b] left-1/2 -bottom-5 transform -translate-x-1/2 opacity-10 rounded-full blur-2xl z-10"></div>

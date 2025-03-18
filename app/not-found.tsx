@@ -3,9 +3,6 @@
 import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { APP_NAME } from '@/lib/constants';
-import { useTheme } from 'next-themes';
-import Image from 'next/image';
 
 const NotFoundPage = () => {
   return (

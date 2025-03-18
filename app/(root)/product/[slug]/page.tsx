@@ -5,7 +5,7 @@ import { getProductBySlug } from '@/lib/actions/product.actions';
 import { notFound } from 'next/navigation';
 import ProductRoulette from '@/components/shared/product/product-roulette';
 import CaseContents from '@/components/shared/product/case-contents';
-import { ProductSkinProps, SkinProps } from '@/types';
+import { ProductSkinProps } from '@/types';
 
 const ProductDetailsPage = async (props: {
   params: Promise<{ slug: string }>;

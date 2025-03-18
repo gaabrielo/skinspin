@@ -1,18 +1,13 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { cn, getRarityClasses } from '@/lib/utils';
-import { ProductSkinProps, SkinProps } from '@/types';
+import { ProductSkinProps, Rarity, SkinProps } from '@/types';
 import { EyeOffIcon } from 'lucide-react';
 
 import Image from 'next/image';
@@ -65,9 +60,9 @@ const SelectableSkinList = ({
             <div>
               <span>
                 {dropRateList.reduce((acc, product) => {
-                  return acc + product.dropChance > 100
+                  return acc + Number(product.dropChance) > 100
                     ? 100
-                    : acc + product.dropChance;
+                    : acc + Number(product.dropChance);
                 }, 0) || 0}
               </span>
               <span className="text-sm">/100</span>
@@ -77,9 +72,9 @@ const SelectableSkinList = ({
           <Progress
             value={
               dropRateList.reduce((acc, product) => {
-                return acc + product.dropChance > 100
+                return acc + Number(product.dropChance) > 100
                   ? 100
-                  : acc + product.dropChance;
+                  : acc + Number(product.dropChance);
               }, 0) || 0
             }
             className="h-3 rounded-none bg-transparent border-t border-t-border"
@@ -144,7 +139,7 @@ const SelectableSkinList = ({
                     <div
                       key={item.id}
                       className={`rounded-lg p-px ${
-                        getRarityClasses(item.rarity).gradient
+                        getRarityClasses(item.rarity as Rarity).gradient
                       }`}
                     >
                       <Card className="p-0">
