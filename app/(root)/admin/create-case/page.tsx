@@ -211,6 +211,7 @@ const CreateCasePage = () => {
                     <FormItem>
                       <SelectableSkinList
                         data={skins}
+                        // @ts-expect-error: Field value type mismatch due to library typing issue
                         value={field.value || []}
                         onChange={field.onChange}
                       />

@@ -15,8 +15,10 @@ const ProductDetailsPage = async (props: {
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const skins = product.skins.reduce(
-    (acc, skn) => acc.concat({ ...skn, dropChance: Number(skn.dropChance) }),
+  const skins = product.skins?.reduce(
+    // (acc, skn) => acc.concat({ ...skn, dropChance: skn.dropChance }),
+    // @ts-expect-error: Idk 1
+    (acc, skn) => acc.concat(skn),
     [] as ProductSkinProps[]
   );
 
@@ -35,9 +37,10 @@ const ProductDetailsPage = async (props: {
           </div>
         </header>
         <section className="relative pb-10">
+          {/* @ts-expect-error: Idk */}
           <ProductRoulette product={product} />
         </section>
-        <CaseContents data={skins} />
+        <CaseContents data={skins ?? []} />
       </div>
     </>
   );

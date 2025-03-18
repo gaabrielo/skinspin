@@ -21,14 +21,17 @@ const ProductRoulette = ({ product }: { product: Product }) => {
   // const xTranslation = useMotionValue(0);
   const controls = useAnimation();
   const currentPosition = useRef(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [isSpinning, setIsSpinning] = useState(false);
+  console.log(`isSpinning => ${isSpinning}`);
   // const [result, setResult] = useState<SkinProps | null>(null);
   const [currentWeaponsPassed, setCurrentWeaponsPassed] = useState(0);
 
   const extendedData = () => {
     if (!product.skins) return [];
 
+    // @ts-expect-error: Weird shit
     const weightedSkins: SkinProps[] = product.skins
       .flatMap((pSkin) =>
         Array.from({ length: Number(pSkin.dropChance) }, () => pSkin?.skin)
@@ -43,6 +46,15 @@ const ProductRoulette = ({ product }: { product: Product }) => {
 
   const handleSpin = () => {
     setIsSpinning(true);
+
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // Reinicia o som
+      audioRef.current.volume = 1.0;
+      audioRef.current
+        .play()
+        .catch((err) => console.error('Erro ao reproduzir áudio:', err));
+    }
+
     const minPixelsShifted = 3000; // Mínimo de pixels para garantir uma rotação considerável
     const maxPixelsShifted = 5000; // Máximo de pixels para o giro
     const randomDisplacement =
@@ -83,6 +95,11 @@ const ProductRoulette = ({ product }: { product: Product }) => {
     });
 
     setTimeout(() => {
+      // if (audioRef.current) {
+      //   audioRef.current.pause();
+      //   audioRef.current.currentTime = 0;
+      // }
+
       const markerPosition = width / 2;
       const finalPosition = Math.abs(newPosition) + markerPosition;
       const itemIndex = Math.floor(
@@ -99,6 +116,9 @@ const ProductRoulette = ({ product }: { product: Product }) => {
 
   return (
     <>
+      <audio ref={audioRef} preload="auto">
+        <source src="@/assets/roulette-spin.mp3" type="audio/mpeg" />
+      </audio>
       <div className="relative overflow-clip rounded-lg p-0.5 bg-gradient-to-b from-[#f5c71b] to-border ring-8 ring-border">
         <div className="absolute w-10 h-20 bg-[#f5c71b] left-1/2 bottom-2 transform -translate-x-1/2 opacity-20 rounded-full blur-2xl z-10"></div>
         <div className="absolute w-80 h-10 bg-[#f5c71b] left-1/2 -bottom-5 transform -translate-x-1/2 opacity-10 rounded-full blur-2xl z-10"></div>

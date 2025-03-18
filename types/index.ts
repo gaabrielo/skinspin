@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { insertProductSchema } from '@/lib/validators';
-import { Decimal } from '@prisma/client/runtime/library';
 
 export type Rarity =
   | 'common'
@@ -10,13 +9,6 @@ export type Rarity =
   | 'legendary'
   | 'ancient'
   | 'immortal';
-
-export type Product = z.infer<typeof insertProductSchema> & {
-  id: string;
-  rating: number;
-  createdAt: Date;
-  skins?: ProductSkinProps[];
-};
 
 export type SkinProps = {
   id: string;
@@ -32,6 +24,13 @@ export type SkinProps = {
 export type ProductSkinProps = {
   productId?: string;
   skinId: string;
-  dropChance: number | Decimal;
+  dropChance: number;
   skin?: SkinProps;
+};
+
+export type Product = z.infer<typeof insertProductSchema> & {
+  id: string;
+  rating: number | string;
+  createdAt: Date;
+  skins?: ProductSkinProps[];
 };
