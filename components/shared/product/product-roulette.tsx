@@ -29,7 +29,6 @@ const ProductRoulette = ({ product }: { product: Product }) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [disabledSound, setDisabledSound] = useState(false);
 
-  console.log(`isSpinning => ${isSpinning}`);
   // const [result, setResult] = useState<SkinProps | null>(null);
   const [currentWeaponsPassed, setCurrentWeaponsPassed] = useState(0);
 
@@ -66,7 +65,7 @@ const ProductRoulette = ({ product }: { product: Product }) => {
     }
 
     const minPixelsShifted = 5000; // Mínimo de pixels para garantir uma rotação considerável
-    const maxPixelsShifted = 7000; // Máximo de pixels para o giro
+    const maxPixelsShifted = 6200; // Máximo de pixels para o giro
     const randomDisplacement =
       Math.floor(Math.random() * (maxPixelsShifted - minPixelsShifted)) +
       minPixelsShifted;

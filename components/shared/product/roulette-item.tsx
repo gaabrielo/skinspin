@@ -9,7 +9,7 @@ interface Props {
 
 const RouletteItem: React.FC<Props> = ({ item }) => {
   return (
-    <Card className="p-0 relative overflow-hidden h-[180px] min-w-[168px]">
+    <Card className="p-0 h-[180px] min-w-[168px] max-w-[168px]">
       <CardTitle className="p-2 pb-0">
         <Image
           src={item.image}

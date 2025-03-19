@@ -24,8 +24,8 @@ const Footer = () => {
 
   return (
     <footer className="w-full border-t dark:border-transparent py-6">
-      <div className="grid grid-cols-3 wrapper">
-        <div className="space-y-3 col-span-1">
+      <div className="grid grid-cols-1 grid-rows-2 gap-8 wrapper md:grid-cols-2 md:grid-rows-1">
+        <div className="col-span-1 flex flex-col gap-3 items-center md:items-start">
           <Image
             src={logoSrc}
             alt={`${APP_NAME} logo`}
@@ -62,7 +62,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="-col-end-1 flex flex-col text-right items-end text-sm space-y-1.5">
+        <div className="md:-col-end-1 flex flex-col text-right items-end text-sm space-y-1.5">
           <Link
             href={'https://github.com/gaabrielo'}
             target="_blank"
