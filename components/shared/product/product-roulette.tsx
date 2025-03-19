@@ -7,6 +7,8 @@ import { motion, useAnimation } from 'motion/react';
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Product, SkinProps } from '@/types';
+import { VolumeXIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const shuffleArray = (array: SkinProps[]) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -17,13 +19,16 @@ const shuffleArray = (array: SkinProps[]) => {
 };
 
 const ProductRoulette = ({ product }: { product: Product }) => {
-  const [ref, { width }] = useMeasure();
+  const [rouletteRef, { width: rouletteWidth }] = useMeasure();
+
   // const xTranslation = useMotionValue(0);
   const controls = useAnimation();
   const currentPosition = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [isSpinning, setIsSpinning] = useState(false);
+  const [disabledSound, setDisabledSound] = useState(false);
+
   console.log(`isSpinning => ${isSpinning}`);
   // const [result, setResult] = useState<SkinProps | null>(null);
   const [currentWeaponsPassed, setCurrentWeaponsPassed] = useState(0);
@@ -31,6 +36,7 @@ const ProductRoulette = ({ product }: { product: Product }) => {
   const extendedData = () => {
     if (!product.skins) return [];
 
+    // Isso funciona se todas as skins tenham valores inteiros como porcentagem de dropar => dropRate >= 1
     // @ts-expect-error: Weird shit
     const weightedSkins: SkinProps[] = product.skins
       .flatMap((pSkin) =>
@@ -49,43 +55,44 @@ const ProductRoulette = ({ product }: { product: Product }) => {
 
     if (audioRef.current) {
       audioRef.current.currentTime = 0; // Reinicia o som
+
       audioRef.current.volume = 1.0;
+      if (disabledSound) {
+        audioRef.current.volume = 0;
+      }
       audioRef.current
         .play()
         .catch((err) => console.error('Erro ao reproduzir áudio:', err));
     }
 
-    const minPixelsShifted = 3000; // Mínimo de pixels para garantir uma rotação considerável
-    const maxPixelsShifted = 5000; // Máximo de pixels para o giro
+    const minPixelsShifted = 5000; // Mínimo de pixels para garantir uma rotação considerável
+    const maxPixelsShifted = 7000; // Máximo de pixels para o giro
     const randomDisplacement =
       Math.floor(Math.random() * (maxPixelsShifted - minPixelsShifted)) +
       minPixelsShifted;
     const itemWidth = 168;
 
     const weaponsPassed = Math.floor(randomDisplacement / itemWidth);
+    const updatedWeaponsPassed = currentWeaponsPassed + weaponsPassed;
+
     // Calcula a nova posição
     const newPosition = currentPosition.current - randomDisplacement;
     currentPosition.current = newPosition;
-    const updatedWeaponsPassed = currentWeaponsPassed + weaponsPassed;
 
-    if (updatedWeaponsPassed > 80) {
-      setCurrentWeaponsPassed(0);
-
+    if (updatedWeaponsPassed > 0.8 * visibleSkins.length) {
       setVisibleSkins((prev) => {
-        // const remainingSkins = prev.slice(-20); // Mantém os últimos 20 para evitar um "pulo"
+        // const remainingSkins = prev.slice(-20); // N funciona
         const newSkins = extendedData();
+        console.log(`NEW SKINS CARIO => ${newSkins}`);
         return [...prev, ...shuffleArray(newSkins)];
 
-        // const shuffledNewSkins = shuffleArray(newSkins);
-
         // // 📌 **Ajusta a posição da roleta para compensar os itens removidos**
+        // const shuffledNewSkins = shuffleArray(newSkins);
         // const removedItemsCount = prev.length - remainingSkins.length;
         // currentPosition.current += removedItemsCount * itemWidth;
 
         // return [...remainingSkins, ...shuffledNewSkins];
       });
-    } else {
-      setCurrentWeaponsPassed(updatedWeaponsPassed);
     }
 
     // 🌀 **Agora a roleta continua girando suavemente sem precisar resetar**
@@ -94,13 +101,9 @@ const ProductRoulette = ({ product }: { product: Product }) => {
       transition: { duration: 5, ease: [0.2, 0.8, 0.2, 1] },
     });
 
+    setCurrentWeaponsPassed(updatedWeaponsPassed);
     setTimeout(() => {
-      // if (audioRef.current) {
-      //   audioRef.current.pause();
-      //   audioRef.current.currentTime = 0;
-      // }
-
-      const markerPosition = width / 2;
+      const markerPosition = rouletteWidth / 2;
       const finalPosition = Math.abs(newPosition) + markerPosition;
       const itemIndex = Math.floor(
         (finalPosition % (visibleSkins.length * itemWidth)) / itemWidth
@@ -117,13 +120,18 @@ const ProductRoulette = ({ product }: { product: Product }) => {
   return (
     <>
       <audio ref={audioRef} preload="auto">
-        <source src="@/assets/roulette-spin.mp3" type="audio/mpeg" />
+        <source src={'/roulette-spin.mp3'} type="audio/mpeg" />
       </audio>
+
       <div className="relative overflow-clip rounded-lg p-0.5 bg-gradient-to-b from-[#f5c71b] to-border ring-8 ring-border">
         <div className="absolute w-10 h-20 bg-[#f5c71b] left-1/2 bottom-2 transform -translate-x-1/2 opacity-20 rounded-full blur-2xl z-10"></div>
         <div className="absolute w-80 h-10 bg-[#f5c71b] left-1/2 -bottom-5 transform -translate-x-1/2 opacity-10 rounded-full blur-2xl z-10"></div>
         <div className="absolute w-screen h-12 bg-[#f5c71b] left-1/2 -bottom-1/4 transform -translate-x-1/2 opacity-15 rounded-full blur-xl z-10"></div>
-        <Card className="p-0 border-0 relative overflow-hidden" ref={ref}>
+
+        <Card
+          className="p-0 border-0 relative overflow-hidden"
+          ref={rouletteRef}
+        >
           <CardContent className="p-0 bg-border">
             <div className="absolute w-[2px] h-full bg-[#f5c71b] top-0 left-1/2 transform -translate-x-1/2 z-30">
               <div className="absolute w-2 h-6 bg-[#f5c71b] left-1/2 -bottom-3 transform -translate-x-1/2 rounded-full"></div>
@@ -146,7 +154,7 @@ const ProductRoulette = ({ product }: { product: Product }) => {
         </Card>
       </div>
 
-      <div className="w-full flex justify-center mt-10">
+      <div className="w-full flex justify-center mt-10 relative">
         <Button
           variant="ghost"
           className="bg-[#f5c71b] text-black hover:bg-[#f5c71b] hover:brightness-90 hover:text-black"
@@ -155,6 +163,22 @@ const ProductRoulette = ({ product }: { product: Product }) => {
         >
           {isSpinning ? 'Spinning...' : `Spin for $${product.price}`}
         </Button>
+
+        <div className="absolute flex h-full right-0">
+          <Button
+            type="button"
+            size="icon"
+            variant={disabledSound ? 'secondary' : 'outline'}
+            onClick={() => setDisabledSound((prev) => !prev)}
+          >
+            <VolumeXIcon
+              className={cn(
+                'text-neutral-400 transition-colors',
+                disabledSound && 'text-white'
+              )}
+            />
+          </Button>
+        </div>
       </div>
     </>
   );
